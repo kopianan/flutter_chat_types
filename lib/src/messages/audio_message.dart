@@ -3,20 +3,20 @@ import 'package:meta/meta.dart';
 
 import '../message.dart';
 import '../user.dart' show User;
-import 'partial_file.dart';
+import 'partial_audio.dart';
 
-part 'file_message.g.dart';
+part 'audio_message.g.dart';
 
-/// A class that represents file message.
+/// A class that represents audio message.
 @JsonSerializable()
 @immutable
-abstract class FileMessage extends Message {
-  /// Creates a file message.
-  const FileMessage._({
+abstract class AudioMessage extends Message {
+  /// Creates an audio message.
+  const AudioMessage._({
     required super.author,
     super.createdAt,
+    required this.duration,
     required super.id,
-    this.isLoading,
     super.metadata,
     this.mimeType,
     required this.name,
@@ -29,13 +29,14 @@ abstract class FileMessage extends Message {
     MessageType? type,
     super.updatedAt,
     required this.uri,
-  }) : super(type: type ?? MessageType.file);
+    this.waveForm,
+  }) : super(type: type ?? MessageType.audio);
 
-  const factory FileMessage({
+  const factory AudioMessage({
     required User author,
     int? createdAt,
+    required Duration duration,
     required String id,
-    bool? isLoading,
     Map<String, dynamic>? metadata,
     String? mimeType,
     required String name,
@@ -48,66 +49,70 @@ abstract class FileMessage extends Message {
     MessageType? type,
     int? updatedAt,
     required String uri,
-  }) = _FileMessage;
+    List<double>? waveForm,
+  }) = _AudioMessage;
 
-  /// Creates a file message from a map (decoded JSON).
-  factory FileMessage.fromJson(Map<String, dynamic> json) =>
-      _$FileMessageFromJson(json);
+  /// Creates an audio message from a map (decoded JSON).
+  factory AudioMessage.fromJson(Map<String, dynamic> json) =>
+      _$AudioMessageFromJson(json);
 
-  /// Creates a full file message from a partial one.
-  factory FileMessage.fromPartial({
+  /// Creates a full audio message from a partial one.
+  factory AudioMessage.fromPartial({
     required User author,
     int? createdAt,
     required String id,
-    bool? isLoading,
-    required PartialFile partialFile,
+    required PartialAudio partialAudio,
     String? remoteId,
     String? roomId,
     bool? showStatus,
     Status? status,
     int? updatedAt,
   }) =>
-      _FileMessage(
+      _AudioMessage(
         author: author,
         createdAt: createdAt,
+        duration: partialAudio.duration,
         id: id,
-        isLoading: isLoading,
-        metadata: partialFile.metadata,
-        mimeType: partialFile.mimeType,
-        name: partialFile.name,
+        metadata: partialAudio.metadata,
+        mimeType: partialAudio.mimeType,
+        name: partialAudio.name,
         remoteId: remoteId,
-        repliedMessage: partialFile.repliedMessage,
+        repliedMessage: partialAudio.repliedMessage,
         roomId: roomId,
         showStatus: showStatus,
-        size: partialFile.size,
+        size: partialAudio.size,
         status: status,
-        type: MessageType.file,
+        type: MessageType.audio,
         updatedAt: updatedAt,
-        uri: partialFile.uri,
+        uri: partialAudio.uri,
+        waveForm: partialAudio.waveForm,
       );
 
-  /// Specify whether the message content is currently being loaded.
-  final bool? isLoading;
+  /// The length of the audio.
+  final Duration duration;
 
-  /// Media type.
+  /// Media type of the audio file.
   final String? mimeType;
 
-  /// The name of the file.
+  /// The name of the audio.
   final String name;
 
-  /// Size of the file in bytes.
+  /// Size of the audio in bytes.
   final num size;
 
-  /// The file source (either a remote URL or a local resource).
+  /// The audio file source (either a remote URL or a local resource).
   final String uri;
+
+  /// Wave form represented as a list of decibel levels.
+  final List<double>? waveForm;
 
   /// Equatable props.
   @override
   List<Object?> get props => [
         author,
         createdAt,
+        duration,
         id,
-        isLoading,
         metadata,
         mimeType,
         name,
@@ -119,14 +124,15 @@ abstract class FileMessage extends Message {
         status,
         updatedAt,
         uri,
+        waveForm,
       ];
 
   @override
   Message copyWith({
     User? author,
     int? createdAt,
+    Duration? duration,
     String? id,
-    bool? isLoading,
     Map<String, dynamic>? metadata,
     String? mimeType,
     String? name,
@@ -138,20 +144,21 @@ abstract class FileMessage extends Message {
     Status? status,
     int? updatedAt,
     String? uri,
+    List<double>? waveForm,
   });
 
-  /// Converts a file message to the map representation, encodable to JSON.
+  /// Converts an audio message to the map representation, encodable to JSON.
   @override
-  Map<String, dynamic> toJson() => _$FileMessageToJson(this);
+  Map<String, dynamic> toJson() => _$AudioMessageToJson(this);
 }
 
 /// A utility class to enable better copyWith.
-class _FileMessage extends FileMessage {
-  const _FileMessage({
+class _AudioMessage extends AudioMessage {
+  const _AudioMessage({
     required super.author,
     super.createdAt,
+    required super.duration,
     required super.id,
-    super.isLoading,
     super.metadata,
     super.mimeType,
     required super.name,
@@ -164,15 +171,15 @@ class _FileMessage extends FileMessage {
     super.type,
     super.updatedAt,
     required super.uri,
+    super.waveForm,
   }) : super._();
 
   @override
   Message copyWith({
     User? author,
     dynamic createdAt = _Unset,
-    dynamic height = _Unset,
+    Duration? duration,
     String? id,
-    dynamic isLoading = _Unset,
     dynamic metadata = _Unset,
     dynamic mimeType = _Unset,
     String? name,
@@ -184,13 +191,13 @@ class _FileMessage extends FileMessage {
     dynamic status = _Unset,
     dynamic updatedAt = _Unset,
     String? uri,
-    dynamic width = _Unset,
+    dynamic waveForm = _Unset,
   }) =>
-      _FileMessage(
+      _AudioMessage(
         author: author ?? this.author,
         createdAt: createdAt == _Unset ? this.createdAt : createdAt as int?,
+        duration: duration ?? this.duration,
         id: id ?? this.id,
-        isLoading: isLoading == _Unset ? this.isLoading : isLoading as bool?,
         metadata: metadata == _Unset
             ? this.metadata
             : metadata as Map<String, dynamic>?,
@@ -207,6 +214,8 @@ class _FileMessage extends FileMessage {
         status: status == _Unset ? this.status : status as Status?,
         updatedAt: updatedAt == _Unset ? this.updatedAt : updatedAt as int?,
         uri: uri ?? this.uri,
+        waveForm:
+            waveForm == _Unset ? this.waveForm : waveForm as List<double>?,
       );
 }
 

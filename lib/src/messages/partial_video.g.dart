@@ -1,23 +1,24 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-part of 'partial_file.dart';
+part of 'partial_video.dart';
 
 // **************************************************************************
 // JsonSerializableGenerator
 // **************************************************************************
 
-PartialFile _$PartialFileFromJson(Map<String, dynamic> json) => PartialFile(
+PartialVideo _$PartialVideoFromJson(Map<String, dynamic> json) => PartialVideo(
+      height: (json['height'] as num?)?.toDouble(),
       metadata: json['metadata'] as Map<String, dynamic>?,
-      mimeType: json['mimeType'] as String?,
       name: json['name'] as String,
       repliedMessage: json['repliedMessage'] == null
           ? null
           : Message.fromJson(json['repliedMessage'] as Map<String, dynamic>),
       size: json['size'] as num,
       uri: json['uri'] as String,
+      width: (json['width'] as num?)?.toDouble(),
     );
 
-Map<String, dynamic> _$PartialFileToJson(PartialFile instance) {
+Map<String, dynamic> _$PartialVideoToJson(PartialVideo instance) {
   final val = <String, dynamic>{};
 
   void writeNotNull(String key, dynamic value) {
@@ -26,11 +27,12 @@ Map<String, dynamic> _$PartialFileToJson(PartialFile instance) {
     }
   }
 
+  writeNotNull('height', instance.height);
   writeNotNull('metadata', instance.metadata);
-  writeNotNull('mimeType', instance.mimeType);
   val['name'] = instance.name;
   writeNotNull('repliedMessage', instance.repliedMessage?.toJson());
   val['size'] = instance.size;
   val['uri'] = instance.uri;
+  writeNotNull('width', instance.width);
   return val;
 }

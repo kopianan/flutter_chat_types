@@ -1,3 +1,77 @@
+## 3.6.2
+
+- Update dependencies
+
+## 3.6.1
+
+- Update dependencies. Requires Dart >= 2.19.0.
+
+## 3.6.0
+
+- Add audio message type. Thanks @marinkobabic for the PR!
+- Add video message type
+- Update dependencies. Requires Dart >= 2.18.0.
+
+## 3.5.0
+
+- Update to Flutter 3.3.3
+
+## 3.4.5
+
+- Exported system message type. Thanks @felixgabler for the PR!
+
+## 3.4.4
+
+- Add system message type. Thanks @felixgabler for the PR!
+- Update dependencies
+
+## 3.4.3
+
+- Code refactor
+
+## 3.4.2
+
+- Fix partial message constructors
+
+## 3.4.1
+
+- Downgrade meta to support flutter test
+
+## 3.4.0
+
+- Update to Flutter 3. Thanks @felixgabler for the PR!
+- Fix `copyWith` for all message types. Thanks @felixgabler for the PR!
+
+## 3.3.4
+
+- Add `isLoading` to the file message. Thanks @felixgabler for the PR!
+
+## 3.3.3
+
+- Add `author` and `createdAt` to the `copyWith` method. Thanks @felixgabler for the PR!
+
+## 3.3.2
+
+- Add `showStatus` to all messages. Thanks @arsamme for the PR!
+- Update to Flutter 2.10.4
+
+## 3.3.1
+
+- Update to Flutter 2.10.2
+
+## 3.3.0
+
+- Do not include null values in JSON. Thanks @felixgabler for the PR!
+- Update to Flutter 2.10
+
+## 3.2.2
+
+- Update dependencies. Requires Dart >= 2.15.1.
+
+## 3.2.1
+
+- Update dependencies
+
 ## 3.2.0
 
 - Update dependencies
@@ -63,7 +137,7 @@ This release marks a major chat architecture overhaul based on a community feedb
 - **BREAKING CHANGE**: [FileMessage] `fileName` is renamed to `name`
 - **BREAKING CHANGE**: [ImageMessage] `imageName` is renamed to `name`
 - **BREAKING CHANGE**: [Messages] `authorId` is replaced with `author` to support avatars and names inside the chat
-- **BREAKING CHANGE**: [Messages] `timestamp` is renamed to `createdAt`. All timestamps are in `ms` now. 
+- **BREAKING CHANGE**: [Messages] `timestamp` is renamed to `createdAt`. All timestamps are in `ms` now.
 - **BREAKING CHANGE**: [Status] `read` is renamed to `seen`
 - **BREAKING CHANGE**: [User] `avatarUrl` is renamed to `imageUrl`
 - New `custom` and `unsupported` message types. First one is used to build any message you want, second one is to support backwards compatibility

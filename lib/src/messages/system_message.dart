@@ -3,18 +3,17 @@ import 'package:meta/meta.dart';
 
 import '../message.dart';
 import '../user.dart' show User;
-import 'partial_custom.dart';
 
-part 'custom_message.g.dart';
+part 'system_message.g.dart';
 
-/// A class that represents custom message. Use [metadata] to store anything
+/// A class that represents a system message (anything around chat management). Use [metadata] to store anything
 /// you want.
 @JsonSerializable()
 @immutable
-abstract class CustomMessage extends Message {
+abstract class SystemMessage extends Message {
   /// Creates a custom message.
-  const CustomMessage._({
-    required super.author,
+  const SystemMessage._({
+    super.author = const User(id: 'system'),
     super.createdAt,
     required super.id,
     super.metadata,
@@ -23,12 +22,13 @@ abstract class CustomMessage extends Message {
     super.roomId,
     super.showStatus,
     super.status,
+    required this.text,
     MessageType? type,
     super.updatedAt,
-  }) : super(type: type ?? MessageType.custom);
+  }) : super(type: type ?? MessageType.system);
 
-  const factory CustomMessage({
-    required User author,
+  const factory SystemMessage({
+    User author,
     int? createdAt,
     required String id,
     Map<String, dynamic>? metadata,
@@ -37,39 +37,17 @@ abstract class CustomMessage extends Message {
     String? roomId,
     bool? showStatus,
     Status? status,
+    required String text,
     MessageType? type,
     int? updatedAt,
-  }) = _CustomMessage;
+  }) = _SystemMessage;
 
   /// Creates a custom message from a map (decoded JSON).
-  factory CustomMessage.fromJson(Map<String, dynamic> json) =>
-      _$CustomMessageFromJson(json);
+  factory SystemMessage.fromJson(Map<String, dynamic> json) =>
+      _$SystemMessageFromJson(json);
 
-  /// Creates a full custom message from a partial one.
-  factory CustomMessage.fromPartial({
-    required User author,
-    int? createdAt,
-    required String id,
-    required PartialCustom partialCustom,
-    String? remoteId,
-    String? roomId,
-    bool? showStatus,
-    Status? status,
-    int? updatedAt,
-  }) =>
-      _CustomMessage(
-        author: author,
-        createdAt: createdAt,
-        id: id,
-        metadata: partialCustom.metadata,
-        remoteId: remoteId,
-        repliedMessage: partialCustom.repliedMessage,
-        roomId: roomId,
-        showStatus: showStatus,
-        status: status,
-        type: MessageType.custom,
-        updatedAt: updatedAt,
-      );
+  /// System message content (could be text or translation key).
+  final String text;
 
   /// Equatable props.
   @override
@@ -83,6 +61,7 @@ abstract class CustomMessage extends Message {
         roomId,
         showStatus,
         status,
+        text,
         updatedAt,
       ];
 
@@ -97,19 +76,20 @@ abstract class CustomMessage extends Message {
     String? roomId,
     bool? showStatus,
     Status? status,
+    String? text,
     int? updatedAt,
   });
 
   /// Converts a custom message to the map representation,
   /// encodable to JSON.
   @override
-  Map<String, dynamic> toJson() => _$CustomMessageToJson(this);
+  Map<String, dynamic> toJson() => _$SystemMessageToJson(this);
 }
 
 /// A utility class to enable better copyWith.
-class _CustomMessage extends CustomMessage {
-  const _CustomMessage({
-    required super.author,
+class _SystemMessage extends SystemMessage {
+  const _SystemMessage({
+    super.author,
     super.createdAt,
     required super.id,
     super.metadata,
@@ -118,6 +98,7 @@ class _CustomMessage extends CustomMessage {
     super.roomId,
     super.showStatus,
     super.status,
+    required super.text,
     super.type,
     super.updatedAt,
   }) : super._();
@@ -133,9 +114,10 @@ class _CustomMessage extends CustomMessage {
     dynamic roomId = _Unset,
     dynamic showStatus = _Unset,
     dynamic status = _Unset,
+    String? text,
     dynamic updatedAt = _Unset,
   }) =>
-      _CustomMessage(
+      _SystemMessage(
         author: author ?? this.author,
         createdAt: createdAt == _Unset ? this.createdAt : createdAt as int?,
         id: id ?? this.id,
@@ -150,6 +132,7 @@ class _CustomMessage extends CustomMessage {
         showStatus:
             showStatus == _Unset ? this.showStatus : showStatus as bool?,
         status: status == _Unset ? this.status : status as Status?,
+        text: text ?? this.text,
         updatedAt: updatedAt == _Unset ? this.updatedAt : updatedAt as int?,
       );
 }

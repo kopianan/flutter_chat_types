@@ -1,17 +1,18 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-part of 'image_message.dart';
+part of 'audio_message.dart';
 
 // **************************************************************************
 // JsonSerializableGenerator
 // **************************************************************************
 
-ImageMessage _$ImageMessageFromJson(Map<String, dynamic> json) => ImageMessage(
+AudioMessage _$AudioMessageFromJson(Map<String, dynamic> json) => AudioMessage(
       author: User.fromJson(json['author'] as Map<String, dynamic>),
       createdAt: json['createdAt'] as int?,
-      height: (json['height'] as num?)?.toDouble(),
+      duration: Duration(microseconds: json['duration'] as int),
       id: json['id'] as String,
       metadata: json['metadata'] as Map<String, dynamic>?,
+      mimeType: json['mimeType'] as String?,
       name: json['name'] as String,
       remoteId: json['remoteId'] as String?,
       repliedMessage: json['repliedMessage'] == null
@@ -24,10 +25,12 @@ ImageMessage _$ImageMessageFromJson(Map<String, dynamic> json) => ImageMessage(
       type: $enumDecodeNullable(_$MessageTypeEnumMap, json['type']),
       updatedAt: json['updatedAt'] as int?,
       uri: json['uri'] as String,
-      width: (json['width'] as num?)?.toDouble(),
+      waveForm: (json['waveForm'] as List<dynamic>?)
+          ?.map((e) => (e as num).toDouble())
+          .toList(),
     );
 
-Map<String, dynamic> _$ImageMessageToJson(ImageMessage instance) {
+Map<String, dynamic> _$AudioMessageToJson(AudioMessage instance) {
   final val = <String, dynamic>{
     'author': instance.author.toJson(),
   };
@@ -48,11 +51,12 @@ Map<String, dynamic> _$ImageMessageToJson(ImageMessage instance) {
   writeNotNull('status', _$StatusEnumMap[instance.status]);
   val['type'] = _$MessageTypeEnumMap[instance.type]!;
   writeNotNull('updatedAt', instance.updatedAt);
-  writeNotNull('height', instance.height);
+  val['duration'] = instance.duration.inMicroseconds;
+  writeNotNull('mimeType', instance.mimeType);
   val['name'] = instance.name;
   val['size'] = instance.size;
   val['uri'] = instance.uri;
-  writeNotNull('width', instance.width);
+  writeNotNull('waveForm', instance.waveForm);
   return val;
 }
 

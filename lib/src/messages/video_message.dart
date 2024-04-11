@@ -3,22 +3,21 @@ import 'package:meta/meta.dart';
 
 import '../message.dart';
 import '../user.dart' show User;
-import 'partial_file.dart';
+import 'partial_video.dart';
 
-part 'file_message.g.dart';
+part 'video_message.g.dart';
 
-/// A class that represents file message.
+/// A class that represents video message.
 @JsonSerializable()
 @immutable
-abstract class FileMessage extends Message {
-  /// Creates a file message.
-  const FileMessage._({
+abstract class VideoMessage extends Message {
+  /// Creates a video message.
+  const VideoMessage._({
     required super.author,
     super.createdAt,
+    this.height,
     required super.id,
-    this.isLoading,
     super.metadata,
-    this.mimeType,
     required this.name,
     super.remoteId,
     super.repliedMessage,
@@ -29,15 +28,15 @@ abstract class FileMessage extends Message {
     MessageType? type,
     super.updatedAt,
     required this.uri,
-  }) : super(type: type ?? MessageType.file);
+    this.width,
+  }) : super(type: type ?? MessageType.video);
 
-  const factory FileMessage({
+  const factory VideoMessage({
     required User author,
     int? createdAt,
+    double? height,
     required String id,
-    bool? isLoading,
     Map<String, dynamic>? metadata,
-    String? mimeType,
     required String name,
     String? remoteId,
     Message? repliedMessage,
@@ -48,68 +47,67 @@ abstract class FileMessage extends Message {
     MessageType? type,
     int? updatedAt,
     required String uri,
-  }) = _FileMessage;
+    double? width,
+  }) = _VideoMessage;
 
-  /// Creates a file message from a map (decoded JSON).
-  factory FileMessage.fromJson(Map<String, dynamic> json) =>
-      _$FileMessageFromJson(json);
+  /// Creates a video message from a map (decoded JSON).
+  factory VideoMessage.fromJson(Map<String, dynamic> json) =>
+      _$VideoMessageFromJson(json);
 
-  /// Creates a full file message from a partial one.
-  factory FileMessage.fromPartial({
+  /// Creates a full video message from a partial one.
+  factory VideoMessage.fromPartial({
     required User author,
     int? createdAt,
     required String id,
-    bool? isLoading,
-    required PartialFile partialFile,
+    required PartialVideo partialVideo,
     String? remoteId,
     String? roomId,
     bool? showStatus,
     Status? status,
     int? updatedAt,
   }) =>
-      _FileMessage(
+      _VideoMessage(
         author: author,
         createdAt: createdAt,
+        height: partialVideo.height,
         id: id,
-        isLoading: isLoading,
-        metadata: partialFile.metadata,
-        mimeType: partialFile.mimeType,
-        name: partialFile.name,
+        metadata: partialVideo.metadata,
+        name: partialVideo.name,
         remoteId: remoteId,
-        repliedMessage: partialFile.repliedMessage,
+        repliedMessage: partialVideo.repliedMessage,
         roomId: roomId,
         showStatus: showStatus,
-        size: partialFile.size,
+        size: partialVideo.size,
         status: status,
-        type: MessageType.file,
+        type: MessageType.video,
         updatedAt: updatedAt,
-        uri: partialFile.uri,
+        uri: partialVideo.uri,
+        width: partialVideo.width,
       );
 
-  /// Specify whether the message content is currently being loaded.
-  final bool? isLoading;
+  /// Video height in pixels.
+  final double? height;
 
-  /// Media type.
-  final String? mimeType;
-
-  /// The name of the file.
+  /// The name of the video.
   final String name;
 
-  /// Size of the file in bytes.
+  /// Size of the video in bytes.
   final num size;
 
-  /// The file source (either a remote URL or a local resource).
+  /// The video source (either a remote URL or a local resource).
   final String uri;
+
+  /// Video width in pixels.
+  final double? width;
 
   /// Equatable props.
   @override
   List<Object?> get props => [
         author,
         createdAt,
+        height,
         id,
-        isLoading,
         metadata,
-        mimeType,
         name,
         remoteId,
         repliedMessage,
@@ -119,16 +117,16 @@ abstract class FileMessage extends Message {
         status,
         updatedAt,
         uri,
+        width,
       ];
 
   @override
   Message copyWith({
     User? author,
     int? createdAt,
+    double? height,
     String? id,
-    bool? isLoading,
     Map<String, dynamic>? metadata,
-    String? mimeType,
     String? name,
     String? remoteId,
     Message? repliedMessage,
@@ -138,22 +136,22 @@ abstract class FileMessage extends Message {
     Status? status,
     int? updatedAt,
     String? uri,
+    double? width,
   });
 
-  /// Converts a file message to the map representation, encodable to JSON.
+  /// Converts an video message to the map representation, encodable to JSON.
   @override
-  Map<String, dynamic> toJson() => _$FileMessageToJson(this);
+  Map<String, dynamic> toJson() => _$VideoMessageToJson(this);
 }
 
 /// A utility class to enable better copyWith.
-class _FileMessage extends FileMessage {
-  const _FileMessage({
+class _VideoMessage extends VideoMessage {
+  const _VideoMessage({
     required super.author,
     super.createdAt,
+    super.height,
     required super.id,
-    super.isLoading,
     super.metadata,
-    super.mimeType,
     required super.name,
     super.remoteId,
     super.repliedMessage,
@@ -164,6 +162,7 @@ class _FileMessage extends FileMessage {
     super.type,
     super.updatedAt,
     required super.uri,
+    super.width,
   }) : super._();
 
   @override
@@ -172,9 +171,7 @@ class _FileMessage extends FileMessage {
     dynamic createdAt = _Unset,
     dynamic height = _Unset,
     String? id,
-    dynamic isLoading = _Unset,
     dynamic metadata = _Unset,
-    dynamic mimeType = _Unset,
     String? name,
     dynamic remoteId = _Unset,
     dynamic repliedMessage = _Unset,
@@ -186,15 +183,14 @@ class _FileMessage extends FileMessage {
     String? uri,
     dynamic width = _Unset,
   }) =>
-      _FileMessage(
+      _VideoMessage(
         author: author ?? this.author,
         createdAt: createdAt == _Unset ? this.createdAt : createdAt as int?,
+        height: height == _Unset ? this.height : height as double?,
         id: id ?? this.id,
-        isLoading: isLoading == _Unset ? this.isLoading : isLoading as bool?,
         metadata: metadata == _Unset
             ? this.metadata
             : metadata as Map<String, dynamic>?,
-        mimeType: mimeType == _Unset ? this.mimeType : mimeType as String?,
         name: name ?? this.name,
         remoteId: remoteId == _Unset ? this.remoteId : remoteId as String?,
         repliedMessage: repliedMessage == _Unset
@@ -207,6 +203,7 @@ class _FileMessage extends FileMessage {
         status: status == _Unset ? this.status : status as Status?,
         updatedAt: updatedAt == _Unset ? this.updatedAt : updatedAt as int?,
         uri: uri ?? this.uri,
+        width: width == _Unset ? this.width : width as double?,
       );
 }
 

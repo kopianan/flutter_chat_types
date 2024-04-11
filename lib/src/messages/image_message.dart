@@ -1,120 +1,106 @@
 import 'package:json_annotation/json_annotation.dart';
 import 'package:meta/meta.dart';
+
 import '../message.dart';
-import '../preview_data.dart' show PreviewData;
 import '../user.dart' show User;
 import 'partial_image.dart';
 
 part 'image_message.g.dart';
 
 /// A class that represents image message.
-@JsonSerializable(explicitToJson: true)
+@JsonSerializable()
 @immutable
-class ImageMessage extends Message {
+abstract class ImageMessage extends Message {
   /// Creates an image message.
-  const ImageMessage({
+  const ImageMessage._({
+    required super.author,
+    super.createdAt,
+    this.height,
+    required super.id,
+    super.metadata,
+    required this.name,
+    super.remoteId,
+    super.repliedMessage,
+    super.roomId,
+    super.showStatus,
+    required this.size,
+    super.status,
+    MessageType? type,
+    super.updatedAt,
+    required this.uri,
+    this.width,
+  }) : super(type: type ?? MessageType.image);
+
+  const factory ImageMessage({
     required User author,
     int? createdAt,
-    this.height,
+    double? height,
     required String id,
     Map<String, dynamic>? metadata,
-    required this.name,
+    required String name,
     String? remoteId,
+    Message? repliedMessage,
     String? roomId,
-    required this.size,
+    bool? showStatus,
+    required num size,
     Status? status,
     MessageType? type,
     int? updatedAt,
-    required this.uri,
-    this.width,
-  }) : super(
-          author,
-          createdAt,
-          id,
-          metadata,
-          remoteId,
-          roomId,
-          status,
-          type ?? MessageType.image,
-          updatedAt,
-        );
+    required String uri,
+    double? width,
+  }) = _ImageMessage;
+
+  /// Creates an image message from a map (decoded JSON).
+  factory ImageMessage.fromJson(Map<String, dynamic> json) =>
+      _$ImageMessageFromJson(json);
 
   /// Creates a full image message from a partial one.
-  ImageMessage.fromPartial({
+  factory ImageMessage.fromPartial({
     required User author,
     int? createdAt,
     required String id,
     required PartialImage partialImage,
     String? remoteId,
     String? roomId,
+    bool? showStatus,
     Status? status,
     int? updatedAt,
-  })  : height = partialImage.height,
-        name = partialImage.name,
-        size = partialImage.size,
-        uri = partialImage.uri,
-        width = partialImage.width,
-        super(
-          author,
-          createdAt,
-          id,
-          partialImage.metadata,
-          remoteId,
-          roomId,
-          status,
-          MessageType.image,
-          updatedAt,
-        );
+  }) =>
+      _ImageMessage(
+        author: author,
+        createdAt: createdAt,
+        height: partialImage.height,
+        id: id,
+        metadata: partialImage.metadata,
+        name: partialImage.name,
+        remoteId: remoteId,
+        repliedMessage: partialImage.repliedMessage,
+        roomId: roomId,
+        showStatus: showStatus,
+        size: partialImage.size,
+        status: status,
+        type: MessageType.image,
+        updatedAt: updatedAt,
+        uri: partialImage.uri,
+        width: partialImage.width,
+      );
 
-  /// Creates an image message from a map (decoded JSON).
-  factory ImageMessage.fromJson(Map<String, dynamic> json) =>
-      _$ImageMessageFromJson(json);
+  /// Image height in pixels.
+  final double? height;
 
-  /// Converts an image message to the map representation, encodable to JSON.
-  @override
-  Map<String, dynamic> toJson() => _$ImageMessageToJson(this);
+  /// The name of the image.
+  final String name;
 
-  /// Creates a copy of the image message with an updated data
-  /// [metadata] with null value will nullify existing metadata, otherwise
-  /// both metadatas will be merged into one Map, where keys from a passed
-  /// metadata will overwite keys from the previous one.
-  /// [previewData] is ignored for this message type.
-  /// [remoteId] and [updatedAt] with null values will nullify existing value.
-  /// [status] and [uri] with null values will be overwritten by previous values.
-  /// [text] is ignored for this message type.
-  @override
-  Message copyWith({
-    Map<String, dynamic>? metadata,
-    PreviewData? previewData,
-    String? remoteId,
-    Status? status,
-    String? text,
-    int? updatedAt,
-    String? uri,
-  }) {
-    return ImageMessage(
-      author: author,
-      createdAt: createdAt,
-      height: height,
-      id: id,
-      metadata: metadata == null
-          ? null
-          : {
-              ...this.metadata ?? {},
-              ...metadata,
-            },
-      name: name,
-      remoteId: remoteId,
-      roomId: roomId,
-      size: size,
-      status: status ?? this.status,
-      updatedAt: updatedAt,
-      uri: uri ?? this.uri,
-      width: width,
-    );
-  }
+  /// Size of the image in bytes.
+  final num size;
 
-  /// Equatable props
+  /// The image source (either a remote URL or a local resource).
+  final String uri;
+
+  /// Image width in pixels.
+  final double? width;
+
+  /// Equatable props.
   @override
   List<Object?> get props => [
         author,
@@ -124,7 +110,9 @@ class ImageMessage extends Message {
         metadata,
         name,
         remoteId,
+        repliedMessage,
         roomId,
+        showStatus,
         size,
         status,
         updatedAt,
@@ -132,18 +120,91 @@ class ImageMessage extends Message {
         width,
       ];
 
-  /// Image height in pixels
-  final double? height;
+  @override
+  Message copyWith({
+    User? author,
+    int? createdAt,
+    double? height,
+    String? id,
+    Map<String, dynamic>? metadata,
+    String? name,
+    String? remoteId,
+    Message? repliedMessage,
+    String? roomId,
+    bool? showStatus,
+    num? size,
+    Status? status,
+    int? updatedAt,
+    String? uri,
+    double? width,
+  });
 
-  /// The name of the image
-  final String name;
-
-  /// Size of the image in bytes
-  final num size;
-
-  /// The image source (either a remote URL or a local resource)
-  final String uri;
-
-  /// Image width in pixels
-  final double? width;
+  /// Converts an image message to the map representation, encodable to JSON.
+  @override
+  Map<String, dynamic> toJson() => _$ImageMessageToJson(this);
 }
+
+/// A utility class to enable better copyWith.
+class _ImageMessage extends ImageMessage {
+  const _ImageMessage({
+    required super.author,
+    super.createdAt,
+    super.height,
+    required super.id,
+    super.metadata,
+    required super.name,
+    super.remoteId,
+    super.repliedMessage,
+    super.roomId,
+    super.showStatus,
+    required super.size,
+    super.status,
+    super.type,
+    super.updatedAt,
+    required super.uri,
+    super.width,
+  }) : super._();
+
+  @override
+  Message copyWith({
+    User? author,
+    dynamic createdAt = _Unset,
+    dynamic height = _Unset,
+    String? id,
+    dynamic metadata = _Unset,
+    String? name,
+    dynamic remoteId = _Unset,
+    dynamic repliedMessage = _Unset,
+    dynamic roomId = _Unset,
+    dynamic showStatus = _Unset,
+    num? size,
+    dynamic status = _Unset,
+    dynamic updatedAt = _Unset,
+    String? uri,
+    dynamic width = _Unset,
+  }) =>
+      _ImageMessage(
+        author: author ?? this.author,
+        createdAt: createdAt == _Unset ? this.createdAt : createdAt as int?,
+        height: height == _Unset ? this.height : height as double?,
+        id: id ?? this.id,
+        metadata: metadata == _Unset
+            ? this.metadata
+            : metadata as Map<String, dynamic>?,
+        name: name ?? this.name,
+        remoteId: remoteId == _Unset ? this.remoteId : remoteId as String?,
+        repliedMessage: repliedMessage == _Unset
+            ? this.repliedMessage
+            : repliedMessage as Message?,
+        roomId: roomId == _Unset ? this.roomId : roomId as String?,
+        showStatus:
+            showStatus == _Unset ? this.showStatus : showStatus as bool?,
+        size: size ?? this.size,
+        status: status == _Unset ? this.status : status as Status?,
+        updatedAt: updatedAt == _Unset ? this.updatedAt : updatedAt as int?,
+        uri: uri ?? this.uri,
+        width: width == _Unset ? this.width : width as double?,
+      );
+}
+
+class _Unset {}

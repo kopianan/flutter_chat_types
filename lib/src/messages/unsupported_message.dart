@@ -1,7 +1,7 @@
 import 'package:json_annotation/json_annotation.dart';
 import 'package:meta/meta.dart';
+
 import '../message.dart';
-import '../preview_data.dart' show PreviewData;
 import '../user.dart' show User;
 
 part 'unsupported_message.g.dart';
@@ -10,78 +10,43 @@ part 'unsupported_message.g.dart';
 /// compatibility. If chat's end user doesn't update to a new version
 /// where new message types are being sent, some of them will result
 /// to unsupported.
-@JsonSerializable(explicitToJson: true)
+@JsonSerializable()
 @immutable
-class UnsupportedMessage extends Message {
+abstract class UnsupportedMessage extends Message {
   /// Creates an unsupported message.
-  const UnsupportedMessage({
+  const UnsupportedMessage._({
+    required super.author,
+    super.createdAt,
+    required super.id,
+    super.metadata,
+    super.remoteId,
+    super.repliedMessage,
+    super.roomId,
+    super.showStatus,
+    super.status,
+    MessageType? type,
+    super.updatedAt,
+  }) : super(type: type ?? MessageType.unsupported);
+
+  const factory UnsupportedMessage({
     required User author,
     int? createdAt,
     required String id,
     Map<String, dynamic>? metadata,
     String? remoteId,
+    Message? repliedMessage,
     String? roomId,
+    bool? showStatus,
     Status? status,
     MessageType? type,
     int? updatedAt,
-  }) : super(
-          author,
-          createdAt,
-          id,
-          metadata,
-          remoteId,
-          roomId,
-          status,
-          type ?? MessageType.unsupported,
-          updatedAt,
-        );
+  }) = _UnsupportedMessage;
 
   /// Creates an unsupported message from a map (decoded JSON).
   factory UnsupportedMessage.fromJson(Map<String, dynamic> json) =>
       _$UnsupportedMessageFromJson(json);
 
-  /// Converts an unsupported message to the map representation,
-  /// encodable to JSON.
-  @override
-  Map<String, dynamic> toJson() => _$UnsupportedMessageToJson(this);
-
-  /// Creates a copy of the unsupported message with an updated data.
-  /// [metadata] with null value will nullify existing metadata, otherwise
-  /// both metadatas will be merged into one Map, where keys from a passed
-  /// metadata will overwite keys from the previous one.
-  /// [previewData] is ignored for this message type.
-  /// [remoteId] and [updatedAt] with null values will nullify existing value.
-  /// [status] with null value will be overwritten by the previous status.
-  /// [text] is ignored for this message type.
-  /// [uri] is ignored for this message type.
-  @override
-  Message copyWith({
-    Map<String, dynamic>? metadata,
-    PreviewData? previewData,
-    String? remoteId,
-    Status? status,
-    String? text,
-    int? updatedAt,
-    String? uri,
-  }) {
-    return UnsupportedMessage(
-      author: author,
-      createdAt: createdAt,
-      id: id,
-      metadata: metadata == null
-          ? null
-          : {
-              ...this.metadata ?? {},
-              ...metadata,
-            },
-      remoteId: remoteId,
-      roomId: roomId,
-      status: status ?? this.status,
-      updatedAt: updatedAt,
-    );
-  }
-
-  /// Equatable props
+  /// Equatable props.
   @override
   List<Object?> get props => [
         author,
@@ -89,8 +54,79 @@ class UnsupportedMessage extends Message {
         id,
         metadata,
         remoteId,
+        repliedMessage,
         roomId,
+        showStatus,
         status,
         updatedAt,
       ];
+
+  @override
+  Message copyWith({
+    User? author,
+    int? createdAt,
+    String? id,
+    Map<String, dynamic>? metadata,
+    String? remoteId,
+    Message? repliedMessage,
+    String? roomId,
+    bool? showStatus,
+    Status? status,
+    int? updatedAt,
+  });
+
+  /// Converts an unsupported message to the map representation,
+  /// encodable to JSON.
+  @override
+  Map<String, dynamic> toJson() => _$UnsupportedMessageToJson(this);
 }
+
+/// A utility class to enable better copyWith.
+class _UnsupportedMessage extends UnsupportedMessage {
+  const _UnsupportedMessage({
+    required super.author,
+    super.createdAt,
+    required super.id,
+    super.metadata,
+    super.remoteId,
+    super.repliedMessage,
+    super.roomId,
+    super.showStatus,
+    super.status,
+    super.type,
+    super.updatedAt,
+  }) : super._();
+
+  @override
+  Message copyWith({
+    User? author,
+    dynamic createdAt = _Unset,
+    String? id,
+    dynamic metadata = _Unset,
+    dynamic remoteId = _Unset,
+    dynamic repliedMessage = _Unset,
+    dynamic roomId = _Unset,
+    dynamic showStatus = _Unset,
+    dynamic status = _Unset,
+    dynamic updatedAt = _Unset,
+  }) =>
+      _UnsupportedMessage(
+        author: author ?? this.author,
+        createdAt: createdAt == _Unset ? this.createdAt : createdAt as int?,
+        id: id ?? this.id,
+        metadata: metadata == _Unset
+            ? this.metadata
+            : metadata as Map<String, dynamic>?,
+        remoteId: remoteId == _Unset ? this.remoteId : remoteId as String?,
+        repliedMessage: repliedMessage == _Unset
+            ? this.repliedMessage
+            : repliedMessage as Message?,
+        roomId: roomId == _Unset ? this.roomId : roomId as String?,
+        showStatus:
+            showStatus == _Unset ? this.showStatus : showStatus as bool?,
+        status: status == _Unset ? this.status : status as Status?,
+        updatedAt: updatedAt == _Unset ? this.updatedAt : updatedAt as int?,
+      );
+}
+
+class _Unset {}

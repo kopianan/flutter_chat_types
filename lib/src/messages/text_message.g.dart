@@ -15,27 +15,42 @@ TextMessage _$TextMessageFromJson(Map<String, dynamic> json) => TextMessage(
           ? null
           : PreviewData.fromJson(json['previewData'] as Map<String, dynamic>),
       remoteId: json['remoteId'] as String?,
+      repliedMessage: json['repliedMessage'] == null
+          ? null
+          : Message.fromJson(json['repliedMessage'] as Map<String, dynamic>),
       roomId: json['roomId'] as String?,
+      showStatus: json['showStatus'] as bool?,
       status: $enumDecodeNullable(_$StatusEnumMap, json['status']),
       text: json['text'] as String,
       type: $enumDecodeNullable(_$MessageTypeEnumMap, json['type']),
       updatedAt: json['updatedAt'] as int?,
     );
 
-Map<String, dynamic> _$TextMessageToJson(TextMessage instance) =>
-    <String, dynamic>{
-      'author': instance.author.toJson(),
-      'createdAt': instance.createdAt,
-      'id': instance.id,
-      'metadata': instance.metadata,
-      'remoteId': instance.remoteId,
-      'roomId': instance.roomId,
-      'status': _$StatusEnumMap[instance.status],
-      'type': _$MessageTypeEnumMap[instance.type],
-      'updatedAt': instance.updatedAt,
-      'previewData': instance.previewData?.toJson(),
-      'text': instance.text,
-    };
+Map<String, dynamic> _$TextMessageToJson(TextMessage instance) {
+  final val = <String, dynamic>{
+    'author': instance.author.toJson(),
+  };
+
+  void writeNotNull(String key, dynamic value) {
+    if (value != null) {
+      val[key] = value;
+    }
+  }
+
+  writeNotNull('createdAt', instance.createdAt);
+  val['id'] = instance.id;
+  writeNotNull('metadata', instance.metadata);
+  writeNotNull('remoteId', instance.remoteId);
+  writeNotNull('repliedMessage', instance.repliedMessage?.toJson());
+  writeNotNull('roomId', instance.roomId);
+  writeNotNull('showStatus', instance.showStatus);
+  writeNotNull('status', _$StatusEnumMap[instance.status]);
+  val['type'] = _$MessageTypeEnumMap[instance.type]!;
+  writeNotNull('updatedAt', instance.updatedAt);
+  writeNotNull('previewData', instance.previewData?.toJson());
+  val['text'] = instance.text;
+  return val;
+}
 
 const _$StatusEnumMap = {
   Status.delivered: 'delivered',
@@ -46,9 +61,12 @@ const _$StatusEnumMap = {
 };
 
 const _$MessageTypeEnumMap = {
+  MessageType.audio: 'audio',
   MessageType.custom: 'custom',
   MessageType.file: 'file',
   MessageType.image: 'image',
+  MessageType.system: 'system',
   MessageType.text: 'text',
   MessageType.unsupported: 'unsupported',
+  MessageType.video: 'video',
 };
